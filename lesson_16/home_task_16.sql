@@ -62,8 +62,8 @@ SELECT
 	CASE
 		WHEN discount_percent < 10 THEN '<10'
 		WHEN discount_percent BETWEEN 10 AND 20 THEN '10-20'
-		WHEN discount_percent BETWEEN 20 AND 30 THEN '20-30'
-		WHEN discount_percent BETWEEN 30 AND 40 THEN '30-40'
+		WHEN discount_percent BETWEEN 21 AND 30 THEN '21-30'
+		WHEN discount_percent BETWEEN 31 AND 40 THEN '31-40'
 		WHEN discount_percent > 40 THEN '>40'
 	END AS discount_percent_group,
 	COUNT(*) AS cnt,
