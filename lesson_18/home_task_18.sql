@@ -1,12 +1,12 @@
 -- Задача 1: Вывести аэропорты, из которых выполняется менее 50 рейсов
 select 
-    count(f.flight_no) as flights_ammount,   -- Подсчитываем количество рейсов для каждого аэропорта
+    count(f.flight_id) as flights_ammount,   -- Подсчитываем количество рейсов для каждого аэропорта
     a.airport_name   						 -- Имя аэропорта
 from bookings.flights f 
 inner join bookings.airports a 
     on a.airport_code = f.departure_airport  -- Соединяем таблицы рейсов и аэропортов по коду аэропорта вылета
 group by a.airport_name 					 -- Группируем по имени аэропорта
-having count(f.flight_no) < 50  			 -- Отбираем только те аэропорты, где выполняется менее 50 рейсов
+having count(f.flight_id) < 50  			 -- Отбираем только те аэропорты, где выполняется менее 50 рейсов
 order by flights_ammount desc 				 -- Сортируем по количеству рейсов в убывающем порядке
 ;
 

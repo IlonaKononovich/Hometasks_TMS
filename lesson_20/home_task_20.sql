@@ -57,7 +57,12 @@ with tickets_sold as (
     join bookings.ticket_flights tf  -- Соединяем с таблицей билетных рейсов
         on tf.flight_id = f.flight_id  
     group by f.flight_id  -- Группируем по идентификатору рейса
-)
+),
+-- CTE для вычисления среднего количества проданных билетов
+    avg_tickets as (
+    select avg(amount_of_tickets_sold) as avg_amount
+    from tickets_sold
+ )
 -- Основной запрос для вывода рейсов, где количество проданных билетов выше среднего
 select    
     flight_id,  
@@ -65,8 +70,8 @@ select
 from tickets_sold
 where amount_of_tickets_sold > (  -- Фильтруем рейсы, где количество проданных билетов больше среднего
     -- Подзапрос
-    select avg(amount_of_tickets_sold) 
-    from tickets_sold
+    select avg_amount 
+    from avg_tickets
 );
 
 -- Задание 4.2: Функция с параметром минимального процента заполняемости

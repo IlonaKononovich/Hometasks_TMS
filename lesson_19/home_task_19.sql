@@ -24,7 +24,10 @@ join bookings.airports a
 	on a.airport_code = f.departure_airport
 -- GROUPING SETS для нескольких вариантов группировки в одном запросе
 group by grouping sets (
-	(tf.fare_conditions, month_departure),    -- группировка по классу и месяцу
+	(tf.fare_conditions),                    -- группировка по классу
+    (month_departure),                       -- группировка по месяцу
+    (a.airport_name),                        -- группировка по аэропорту
+    (tf.fare_conditions, month_departure),   -- группировка по классу и месяцу
 	(tf.fare_conditions, a.airport_name),    -- группировка по классу и аэропорту
 	(month_departure, a.airport_name),       -- группировка по месяцу и аэропорту
 	()                                       -- общий итог (без группировки)
@@ -50,6 +53,8 @@ with delay_amount as (
         -- вычисляем задержку рейса (разница между запланированным и фактическим временем вылета в секундах)
         extract(EPOCH from (scheduled_departure - actual_departure)) as delay  
     from bookings.flights
+    -- добавляем условие для исключения записей с NULL в actual_departure
+    where actual_departure IS NOT NULL
 )
 -- основной запрос для получения рейсов с задержкой больше средней
 select 
