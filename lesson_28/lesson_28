@@ -1,0 +1,86 @@
+Задача 1. Найти пользователей младше 30 лет
+db.users.find(
+    { age: {$lt: 30}}
+)
+
+Задача 2. Вывести только имя и email пользователей, которые живут в Japan
+db.users.find(
+    { country: "Japan" },
+    { 
+        _id: 0, 
+        name: 1, 
+        email: 1 
+    }
+)
+
+или
+
+db.users.aggregate([
+    { 
+    $match: { country: "Japan" } 
+    },
+    { 
+        $project: { _id: 0, name: 1, email: 1 } 
+    }
+])
+
+Задача 3. Вывести пользователей старше 30 лет и младше 45, отсортированные по возрасту
+db.users.aggregate([
+    { 
+        $match: { 
+            $and: [
+                { age: { $gt: 30 } }, 
+                { age: { $lt: 45 } }
+            ] 
+        } 
+    },
+    { $sort: { age: 1 } }
+])
+
+Задача 4. Посчитать количество пользователей по странам
+db.users.aggregate([
+    {
+        $group: {
+            _id: "$country",
+            count: { $sum: 1 }
+    }
+  }
+])
+
+Задача 5. Посчитать, сколько всего активных пользователей
+db.users.aggregate([
+    {
+		$match: {is_active: true}
+	},
+    {
+        $group: {
+            _id: "$is_active",
+            count: { $sum: 1 }
+        }
+    }
+])
+
+или 
+
+db.users.aggregate([
+    { $match: { is_active: true } },
+    { $count: "active_users" }
+])
+
+Задача 6. Найти минимальный и максимальный возраст
+db.users.aggregate([
+    {
+        $group: {
+            _id: null,
+            min_age: { $min: "$age" },
+            max_age: { $max: "$age" }
+        }
+    }
+])
+
+Задача 7. Вывести имя и возраст самого старшего пользователя
+db.users.aggregate([
+    { $sort: { age: -1 } },
+    { $limit: 1 },
+    { $project: { _id: 0, name: 1, age: 1 } }
+])
