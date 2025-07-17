@@ -4,6 +4,12 @@ from faker import Faker
 from neo4j import GraphDatabase
 from datetime import datetime
 import random
+from airflow.models import Variable
+
+uri = Variable.get("NEO4J_URI")
+user = Variable.get("NEO4J_USER")
+password = Variable.get("NEO4J_PASSWORD")
+
 
 default_args = {
     'depends_on_past': False,
@@ -42,7 +48,8 @@ def generate_bank_data():
 def insert_to_neo4j(**kwargs):
     data = kwargs['ti'].xcom_pull(task_ids='generate_data')
 
-    driver = GraphDatabase.driver("bolt://neo4j:7687", auth=("neo4j", "password"))
+
+    driver = GraphDatabase.driver(uri, auth=(user, password))
 
     def insert_customer_data(tx, customer, transactions):
         tx.run(

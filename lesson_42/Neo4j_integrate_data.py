@@ -5,16 +5,19 @@ from airflow.providers.postgres.hooks.postgres import PostgresHook
 from neo4j import GraphDatabase
 from datetime import datetime, timedelta
 
+from airflow.models import Variable
+
+uri = Variable.get("NEO4J_URI")
+user = Variable.get("NEO4J_USER")
+password = Variable.get("NEO4J_PASSWORD")
+
 default_args = {
     'depends_on_past': False,
     'start_date': datetime(2025, 7, 13),
 }
 
 def transfer_from_neo4j_to_postgres():
-    driver = GraphDatabase.driver(
-        uri="bolt://neo4j:7687",
-        auth=("neo4j", "password")
-    )
+    driver = GraphDatabase.driver(uri, auth=(user, password))
 
     five_min_ago = datetime.now() - timedelta(minutes=5)
     five_min_ago_str = five_min_ago.isoformat()
